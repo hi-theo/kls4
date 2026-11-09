@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f8ff">
+<title>Dampak Lingkungan — Ayo Kenali!</title>
+<style>
+:root{
+  --ink:#17233d;--muted:#64748b;--blue:#4778f5;--blue2:#eaf0ff;
+  --green:#1eaa79;--green-bg:#e9fbf3;--orange:#f59e0b;--orange-bg:#fff6df;
+  --red:#e56b65;--line:#e7ecf4;--surface:#fff;--shadow:0 18px 50px rgba(44,66,112,.10)
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:28px 18px 40px;font-family:Inter,ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);
+ background:radial-gradient(circle at 8% 8%,#e8f4ff 0,transparent 28%),radial-gradient(circle at 92% 12%,#fff0e3 0,transparent 25%),linear-gradient(135deg,#f7f9ff,#f2f8f6)}
+button{font:inherit;cursor:pointer}
+.app{width:min(1120px,100%);margin:auto}
+.panel{background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.9);border-radius:28px;box-shadow:var(--shadow)}
+.menu{max-width:760px;margin:5vh auto 0;padding:clamp(26px,5vw,54px);text-align:center;overflow:hidden;position:relative}
+.menu:before,.menu:after{content:"";position:absolute;border-radius:50%;z-index:0;pointer-events:none}
+.menu:before{width:220px;height:220px;background:#e9f4ff;top:-115px;left:-75px}
+.menu:after{width:190px;height:190px;background:#fff0df;right:-90px;bottom:-100px}
+.menu>*{position:relative;z-index:1}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:99px;background:#edf4ff;color:#4169d5;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.hero-art{width:170px;height:145px;margin:18px auto 8px;display:block}
+h1{font-size:clamp(30px,5vw,48px);line-height:1.08;letter-spacing:-.045em;margin:12px 0;color:#17233d}
+.subtitle{color:var(--muted);font-size:16px;line-height:1.65;max-width:560px;margin:0 auto}
+.instruction{margin:28px auto 25px;max-width:590px;padding:20px 22px;text-align:left;border:1px solid #e5edff;border-radius:20px;background:#f7f9ff}
+.instruction h2{margin:0 0 12px;font-size:16px}
+.instruction ol{margin:0;padding-left:22px;color:#52617b;line-height:1.8;font-size:14px}
+.primary{border:0;border-radius:16px;padding:15px 26px;color:#fff;font-weight:800;background:linear-gradient(135deg,#527df5,#725de8);box-shadow:0 9px 20px rgba(82,125,245,.25);transition:.2s}
+.primary:hover{transform:translateY(-2px);box-shadow:0 13px 24px rgba(82,125,245,.3)}
+.primary:active{transform:scale(.98)}
+.game{padding:clamp(16px,3vw,30px)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#e3f7ed,#dff0ff);font-size:25px}
+.brand h1{font-size:clamp(22px,3vw,30px);margin:0;letter-spacing:-.035em}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.tools{display:flex;gap:8px}
+.icon-btn{border:1px solid var(--line);background:#fff;color:#52617b;border-radius:13px;width:42px;height:42px;font-size:18px}
+.icon-btn:hover{background:#f5f7fc}
+.tip{display:flex;align-items:center;gap:10px;background:#f4f7ff;border:1px solid #e5ecff;color:#52617b;padding:12px 15px;border-radius:15px;font-size:13px;margin-bottom:20px}
+.tip b{color:#365bc4}
+.zones{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.zone-card{min-width:0;border-radius:20px;padding:14px;border:1px solid var(--line);background:#fff;transition:.2s}
+.zone-card.nature{background:linear-gradient(180deg,#f2fcf7,#fff);border-color:#d9f2e5}
+.zone-card.pollution{background:linear-gradient(180deg,#f1f6ff,#fff);border-color:#dce7ff}
+.zone-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.zone-emoji{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;font-size:22px}
+.nature .zone-emoji{background:#dff7e9}.pollution .zone-emoji{background:#e1eaff}
+.zone-head h2{font-size:15px;margin:0;letter-spacing:.01em}
+.zone-head p{font-size:11px;color:var(--muted);margin:3px 0 0}
+.drop-zone{min-height:180px;padding:10px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:9px;border:2px dashed #cbd8e8;border-radius:15px;background:rgba(255,255,255,.65);transition:.2s}
+.nature .drop-zone{border-color:#b9e6ce}.pollution .drop-zone{border-color:#c6d6ff}
+/* Area jawaban dibatasi maksimal tiga baris; jumlah kolom dan tinggi item
+   menyesuaikan lebar layar. Jika isinya lebih banyak, area dapat di-scroll. */
+/* Satu ukuran thumbnail dipakai di area kumpulan dan kedua kotak jawaban. */
+:root{--thumb-size:clamp(76px,10vw,108px)}
+.answer-zone{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(var(--thumb-size),1fr));
+  grid-auto-rows:var(--thumb-size);
+  align-content:start;
+  max-height:calc(3 * var(--thumb-size) + 2 * 9px + 20px);
+  min-height:calc(var(--thumb-size) + 20px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:#b9c8dc transparent;
+  overscroll-behavior:contain;
+}
+.answer-zone::-webkit-scrollbar{width:8px}
+.answer-zone::-webkit-scrollbar-thumb{background:#c4d0e0;border-radius:99px}
+.answer-zone::-webkit-scrollbar-track{background:transparent}
+.answer-zone .draggable-item{width:100%;height:100%;aspect-ratio:1}
+.drop-zone.drag-over,.drop-zone:focus-within{background:#fff;border-color:var(--blue);box-shadow:0 0 0 4px rgba(71,120,245,.09)}
+.pool-card{padding:15px;border:1px solid var(--line);border-radius:20px;background:#f9fbff}
+.pool-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.pool-head h2{font-size:15px;margin:0}
+.counter{font-size:12px;color:#60708b;background:#edf2fa;border-radius:99px;padding:6px 10px;font-weight:700}
+#zone-pool{min-height:120px;background:#fff;border-color:#d7e0ed}
+.draggable-item{width:var(--thumb-size);aspect-ratio:1;position:relative;border:3px solid #fff;border-radius:14px;overflow:hidden;cursor:grab;box-shadow:0 3px 10px rgba(30,48,80,.12);background:#e8edf5;transition:transform .18s,box-shadow .18s,border-color .18s;touch-action:manipulation}
+.draggable-item:hover{transform:translateY(-3px) scale(1.025);box-shadow:0 8px 18px rgba(30,48,80,.18)}
+.draggable-item:active{cursor:grabbing}
+.draggable-item img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.draggable-item.selected{border-color:#527df5;box-shadow:0 0 0 4px rgba(82,125,245,.22);transform:scale(1.06)}
+.draggable-item.correct-item{border-color:#20b77c;box-shadow:0 0 0 3px rgba(32,183,124,.18)}
+.draggable-item.wrong-item{border-color:#f0a33c;box-shadow:0 0 0 3px rgba(240,163,60,.18);animation:wiggle .28s}
+@keyframes wiggle{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.actions{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.secondary{border:1px solid #dce4f0;background:#fff;color:#596981;border-radius:14px;padding:13px 20px;font-weight:700}
+.secondary:hover{background:#f5f8fc}
+.message{display:flex;align-items:center;justify-content:center;gap:9px;text-align:center;margin:17px auto 0;padding:13px 17px;border-radius:15px;font-size:14px;font-weight:700;line-height:1.5;max-width:700px}
+.message.error{background:#fff5e6;color:#9a5b0a;border:1px solid #f8dfb4}
+.message.success{background:#eafaf2;color:#13764f;border:1px solid #c6efd9}
+.hidden{display:none!important}
+.footer-note{text-align:center;color:#93a0b4;font-size:11px;margin:16px 0 0}
+@media(max-width:700px){body{padding:12px 10px 24px}.zones{grid-template-columns:1fr}.drop-zone{min-height:125px}.topbar{align-items:flex-start}.brand p{max-width:220px}.menu{margin-top:2vh}.hero-art{width:145px;height:125px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="app">
+  <section id="main-menu" class="panel menu">
+    <span class="eyebrow">🌱 Belajar sambil bermain</span>
+    <svg class="hero-art" viewBox="0 0 180 150" role="img" aria-label="Ilustrasi bumi dan daun">
+      <ellipse cx="90" cy="132" rx="55" ry="8" fill="#dce9f7"/>
+      <path d="M39 70C39 39 62 17 92 17c30 0 53 23 53 53s-23 53-53 53C62 123 39 100 39 70Z" fill="#69c9f0"/>
+      <path d="M55 48c9-12 19-14 28-10l-4 17-17 8-9-7Zm40-22 18 5 9 15-13 8-12-10Zm-5 43 16-8 14 8-5 18-17 10-13-12Zm-39 5 15 2 7 17-12 11-12-15Z" fill="#42b883"/>
+      <circle cx="76" cy="69" r="3.5" fill="#183b56"/><circle cx="108" cy="69" r="3.5" fill="#183b56"/>
+      <path d="M81 83q11 11 22 0" fill="none" stroke="#183b56" stroke-width="3" stroke-linecap="round"/>
+      <path d="M135 24c10-17 26-18 32-16-1 17-11 28-28 27" fill="#83d69d"/>
+      <path d="M139 34q11-13 24-22" fill="none" stroke="#299b68" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M24 96c-9-12-8-24 1-32 13 8 16 20 8 33" fill="#8bd9a9"/>
+      <path d="M28 99q-1-18-3-27" fill="none" stroke="#299b68" stroke-width="2" stroke-linecap="round"/>
+      <path d="M61 119q-9 13-22 10m79-4q13 8 24-1" fill="none" stroke="#f6bd55" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+    <h1>YUK JADI PECINTA LINGKUNGAN</h1>
+    <p class="subtitle">Yuk, amati gambar dan kenali berbagai masalah yang dapat memengaruhi alam di sekitar kita!</p>
+    <div class="instruction">
+      <h2>🧩 Cara bermain</h2>
+      <ol>
+        <li>Amati setiap gambar yang tersedia.</li>
+        <li>Tarik gambar ke kotak yang sesuai, atau klik gambar lalu klik kotak tujuan.</li>
+        <li>Kelompokkan gambar ke dalam <b>Perusakan Lingkungan</b> atau <b>Akibat Perusakan lingkungan</b>.</li>
+        <li>Jika sudah selesai, tekan <b>Cek Jawaban</b>. Kamu masih bisa memperbaiki jawaban yang belum tepat.</li>
+      </ol>
+    </div>
+    <button id="btn-start" class="primary">Mulai bermain <span aria-hidden="true">→</span></button>
+  </section>
+
+  <section id="game-area" class="panel game hidden">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">🌍</div>
+        <div><h1>YUK JADI PECINTA LINGKUNGAN</h1><p>Pilah gambar-gambar dibawah dengan menggeser ke kolom yang sesuai</p></div>
+      </div>
+      <div class="tools">
+        <button id="btn-sound" class="icon-btn" title="Aktifkan atau matikan suara" aria-label="Aktifkan atau matikan suara">🔇</button>
+        <button id="btn-fullscreen" class="icon-btn" title="Layar penuh" aria-label="Layar penuh">⛶</button>
+      </div>
+    </header>
+
+    <div class="tip"><span>💡</span><span><b>Tips:</b> Tarik gambar menuju kotak yang disesuai</span></div>
+
+    <div class="zones">
+      <section class="zone-card nature">
+        <div class="zone-head"><div class="zone-emoji"></div><div><h2>Perusakan Lingkungan</h2><p> </p></div></div>
+        <div id="zone-alam" data-type="alam" class="drop-zone answer-zone" aria-label="Kotak kerusakan alam dan darat"></div>
+      </section>
+      <section class="zone-card pollution">
+        <div class="zone-head"><div class="zone-emoji"></div><div><h2>Akibat Perusakan Lingkungan</h2><p></p></div></div>
+        <div id="zone-polusi" data-type="polusi" class="drop-zone answer-zone" aria-label="Kotak pencemaran dan polusi"></div>
+      </section>
+    </div>
+
+    <section class="pool-card">
+      <div class="pool-head"><h2>🖼️ Kumpulan Gambar Bentang Alam</h2><span class="counter" id="pool-counter">44 gambar tersisa</span></div>
+      <div id="zone-pool" data-type="pool" class="drop-zone" aria-label="Kumpulan gambar yang belum dikelompokkan"></div>
+    </section>
+
+    <div class="actions">
+      <button id="btn-check" class="primary">Cek jawaban ✓</button>
+      <button id="btn-reset" class="secondary hidden">↻ Acak dan main lagi</button>
+      <button id="btn-menu" class="secondary">Kembali ke awal</button>
+    </div>
+    <div id="message-box" class="message hidden" role="status" aria-live="polite"></div>
+    <p class="footer-note">Tidak apa-apa jika belum tepat. Perhatikan kembali gambarnya dan coba lagi! 🌱</p>
+  </section>
+</main>
+
+<script>
+const itemData = [
+  {
+    "id": "item1",
+    "img": "./img/1.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item2",
+    "img": "./img/2.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item3",
+    "img": "./img/3.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item4",
+    "img": "./img/4.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item5",
+    "img": "./img/5.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item6",
+    "img": "./img/6.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item7",
+    "img": "./img/7.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item8",
+    "img": "./img/8.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item9",
+    "img": "./img/9.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item10",
+    "img": "./img/10.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item11",
+    "img": "./img/11.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item12",
+    "img": "./img/12.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item13",
+    "img": "./img/13.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item14",
+    "img": "./img/14.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item15",
+    "img": "./img/15.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item16",
+    "img": "./img/16.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item17",
+    "img": "./img/17.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item18",
+    "img": "./img/18.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item19",
+    "img": "./img/19.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item20",
+    "img": "./img/20.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item21",
+    "img": "./img/21.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item22",
+    "img": "./img/22.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item23",
+    "img": "./img/23.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item24",
+    "img": "./img/24.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item25",
+    "img": "./img/25.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item26",
+    "img": "./img/26.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item27",
+    "img": "./img/27.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item28",
+    "img": "./img/28.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item29",
+    "img": "./img/29.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item30",
+    "img": "./img/30.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item31",
+    "img": "./img/31.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item32",
+    "img": "./img/32.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item33",
+    "img": "./img/33.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item34",
+    "img": "./img/34.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item35",
+    "img": "./img/35.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item36",
+    "img": "./img/36.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item37",
+    "img": "./img/37.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item38",
+    "img": "./img/38.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item39",
+    "img": "./img/39.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item40",
+    "img": "./img/40.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item41",
+    "img": "./img/41.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item42",
+    "img": "./img/42.jpg",
+    "type": "polusi"
+  },
+  {
+    "id": "item43",
+    "img": "./img/43.jpg",
+    "type": "alam"
+  },
+  {
+    "id": "item44",
+    "img": "./img/44.jpg",
+    "type": "polusi"
+  }
+];
+const mainMenu = document.getElementById('main-menu');
+const gameArea = document.getElementById('game-area');
+const btnStart = document.getElementById('btn-start');
+const btnFullscreen = document.getElementById('btn-fullscreen');
+const btnSound = document.getElementById('btn-sound');
+const poolZone = document.getElementById('zone-pool');
+const dropZones = document.querySelectorAll('.drop-zone');
+const btnCheck = document.getElementById('btn-check');
+const btnReset = document.getElementById('btn-reset');
+const btnMenu = document.getElementById('btn-menu');
+const messageBox = document.getElementById('message-box');
+const poolCounter = document.getElementById('pool-counter');
+let selectedElement = null;
+let soundEnabled = false;
+let audioContext = null;
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+function playTone(frequency=560, duration=.09, type='sine') {
+  if (!soundEnabled) return;
+  try {
+    audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.state === 'suspended') audioContext.resume();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    oscillator.type = type; oscillator.frequency.value = frequency;
+    gain.gain.setValueAtTime(.055, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001, audioContext.currentTime + duration);
+    oscillator.connect(gain); gain.connect(audioContext.destination);
+    oscillator.start(); oscillator.stop(audioContext.currentTime + duration);
+  } catch (error) { console.warn('Audio tidak tersedia:', error); }
+}
+function updateCounter() {
+  const count = poolZone.children.length;
+  poolCounter.textContent = `${count} gambar tersisa`;
+}
+function clearMessage() {
+  messageBox.classList.add('hidden');
+  messageBox.textContent = '';
+}
+function initGame() {
+  document.getElementById('zone-alam').innerHTML = '';
+  document.getElementById('zone-polusi').innerHTML = '';
+  poolZone.innerHTML = '';
+  clearMessage();
+  btnReset.classList.add('hidden');
+  btnCheck.classList.remove('hidden');
+  selectedElement = null;
+
+  shuffleArray([...itemData]).forEach(item => {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'draggable-item';
+    el.draggable = true;
+    el.dataset.id = item.id;
+    el.dataset.type = item.type;
+    el.setAttribute('aria-label', 'Pilih gambar untuk dipindahkan');
+    const img = document.createElement('img');
+    img.src = item.img;
+    img.alt = 'Gambar untuk dikelompokkan';
+    img.draggable = false;
+    img.onerror = () => {
+      img.onerror = null;
+      img.src = 'https://placehold.co/300x300/e8edf5/64748b?text=Gambar+tidak+ada';
+    };
+    el.appendChild(img);
+    el.addEventListener('dragstart', handleDragStart);
+    el.addEventListener('dragend', () => el.classList.remove('opacity-50'));
+    el.addEventListener('click', () => handleItemClick(el));
+    poolZone.appendChild(el);
+  });
+  updateCounter();
+}
+function handleDragStart(event) {
+  const el = event.currentTarget;
+  event.dataTransfer.setData('text/plain', el.dataset.id);
+  event.dataTransfer.effectAllowed = 'move';
+  el.classList.add('opacity-50');
+  if (selectedElement) selectedElement.classList.remove('selected');
+  selectedElement = null;
+}
+function handleItemClick(el) {
+  if (selectedElement === el) {
+    el.classList.remove('selected');
+    selectedElement = null;
+    return;
+  }
+  if (selectedElement) selectedElement.classList.remove('selected');
+  selectedElement = el;
+  el.classList.add('selected');
+  playTone(520, .06);
+}
+function moveItemTo(zone, el) {
+  if (!el) return;
+  zone.appendChild(el);
+  el.classList.remove('selected', 'correct-item', 'wrong-item', 'ring-4', 'ring-red-500', 'ring-green-500');
+  if (selectedElement === el) selectedElement = null;
+  clearMessage();
+  updateCounter();
+  playTone(660, .07);
+}
+dropZones.forEach(zone => {
+  zone.addEventListener('dragover', event => {
+    event.preventDefault();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', event => {
+    if (!zone.contains(event.relatedTarget)) zone.classList.remove('drag-over');
+  });
+  zone.addEventListener('drop', event => {
+    event.preventDefault();
+    zone.classList.remove('drag-over');
+    const id = event.dataTransfer.getData('text/plain');
+    const el = document.querySelector(`[data-id="${CSS.escape(id)}"]`);
+    moveItemTo(zone, el);
+  });
+  zone.addEventListener('click', event => {
+    if (!selectedElement) return;
+    if (event.target.closest('.draggable-item')) return;
+    moveItemTo(zone, selectedElement);
+  });
+});
+function showMessage(text, type) {
+  messageBox.textContent = text;
+  messageBox.className = `message ${type}`;
+}
+btnCheck.addEventListener('click', () => {
+  if (poolZone.children.length > 0) {
+    showMessage('Masih ada gambar yang belum dipindahkan. Yuk, tempatkan semua gambar terlebih dahulu.', 'error');
+    poolZone.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:260});
+    return;
+  }
+  let allCorrect = true;
+  [['zone-alam','alam'],['zone-polusi','polusi']].forEach(([zoneId, expected]) => {
+    document.getElementById(zoneId).querySelectorAll('.draggable-item').forEach(el => {
+      const correct = el.dataset.type === expected;
+      el.classList.toggle('correct-item', correct);
+      el.classList.toggle('wrong-item', !correct);
+      if (!correct) allCorrect = false;
+    });
+  });
+  if (allCorrect) {
+    showMessage('🎉 Hebat! Semua gambar sudah berada di kategori yang tepat. Terima kasih sudah peduli pada bumi!', 'success');
+    btnCheck.classList.add('hidden');
+    btnReset.classList.remove('hidden');
+    playTone(660,.12); setTimeout(()=>playTone(790,.16),130); setTimeout(()=>playTone(990,.2),280);
+  } else {
+    showMessage('Hampir tepat! Gambar dengan bingkai oranye masih perlu dipindahkan. Ayo coba perbaiki.', 'error');
+    playTone(300,.12,'triangle');
+  }
+});
+btnReset.addEventListener('click', initGame);
+btnStart.addEventListener('click', () => {
+  mainMenu.classList.add('hidden');
+  gameArea.classList.remove('hidden');
+  initGame();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+btnMenu.addEventListener('click', () => {
+  gameArea.classList.add('hidden');
+  mainMenu.classList.remove('hidden');
+  clearMessage();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+btnFullscreen.addEventListener('click', async () => {
+  try {
+    if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+    else await document.exitFullscreen();
+  } catch (error) { console.warn('Mode layar penuh tidak tersedia:', error); }
+});
+btnSound.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  btnSound.textContent = soundEnabled ? '🔊' : '🔇';
+  btnSound.title = soundEnabled ? 'Matikan suara' : 'Aktifkan suara';
+  btnSound.setAttribute('aria-label', btnSound.title);
+  if (soundEnabled) playTone(660,.1);
+});
+</script>
+</body>
+</html>
